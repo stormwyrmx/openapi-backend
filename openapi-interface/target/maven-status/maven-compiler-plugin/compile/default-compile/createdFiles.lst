@@ -1,0 +1,6 @@
+com\weng\openapiinterface\OpenapiInterfaceApplication.class
+com\weng\openapiinterface\utils\SignUtil.class
+com\weng\openapiinterface\client\ApiClient.class
+com\weng\openapiinterface\client\controller\GirlController.class
+com\weng\openapiinterface\client\HttpClient.class
+com\weng\openapiinterface\dto\GirlChangeRequest.class
