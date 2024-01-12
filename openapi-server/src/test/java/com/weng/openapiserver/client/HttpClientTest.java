@@ -23,6 +23,7 @@ public class HttpClientTest
     @Resource
     Gson gson;
 
+
     @Autowired
     private OpenApiClient openApiClient;
 
