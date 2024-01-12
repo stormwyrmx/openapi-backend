@@ -60,7 +60,7 @@ public class OpenApiClient
             //发送请求
             response = httpClient.execute(httpGet);
 
-            //判断响应状态
+            //判断响应状态，若没有路径匹配，则返回404，不会抛出异常
             if(response.getStatusLine().getStatusCode() == 200){
                 //拿到响应体，转成字符串
                 result = EntityUtils.toString(response.getEntity(),"UTF-8");
@@ -107,7 +107,7 @@ public class OpenApiClient
                 httpPost.setEntity(entity);
             }
 
-            httpPost.setConfig(builderRequestConfig());
+//            httpPost.setConfig(builderRequestConfig());
             httpPost.setHeaders(getHeaders());
 
             // 执行http请求
@@ -156,7 +156,7 @@ public class OpenApiClient
                 httpPost.setEntity(entity);
             }
 
-            httpPost.setConfig(builderRequestConfig());
+//            httpPost.setConfig(builderRequestConfig());
             httpPost.setHeaders(getHeaders());
 
             // 执行http请求

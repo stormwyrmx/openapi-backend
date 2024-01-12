@@ -2,10 +2,12 @@ package com.weng.openapiinterface.client;
 
 import com.google.gson.Gson;
 import com.weng.openapiclientspringbootstarter.client.OpenApiClient;
+import jakarta.annotation.Resource;
 import org.apache.http.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.DigestUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ class HttpClientTest
 {
     @Autowired
     private OpenApiClient openApiClient;
+
 
     @Test
     public void testGson() throws IOException
@@ -49,4 +52,16 @@ class HttpClientTest
         String result = openApiClient.doPost4Json("http://localhost:8081/api/girl/changeToGirl", map);
         System.out.println("result====>"+result);
     }
+
+    @Test
+    public void testMd5()
+    {
+        String s1 = DigestUtils.md5DigestAsHex("weng".getBytes());
+        String s2 = DigestUtils.md5DigestAsHex("weng".getBytes());
+        System.out.println("s1===>"+ s1);
+        System.out.println("s2===>"+ s2);
+    }
+
+
+
 }

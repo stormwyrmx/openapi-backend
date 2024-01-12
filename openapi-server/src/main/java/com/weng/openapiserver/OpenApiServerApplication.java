@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({"com.weng.openapiinterface","com.weng.openapiserver"})
+//@ComponentScan({"com.weng.openapiinterface","com.weng.openapiserver"})
 public class OpenApiServerApplication
 {
 
