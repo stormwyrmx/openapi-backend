@@ -15,6 +15,8 @@ public class OpenApiClientAutoConfiguration
     @Bean
     public OpenApiClient apiClient(OpenApiClientProperties openApiClientProperties)
     {
-        return new OpenApiClient(openApiClientProperties.getApiKey());
+        OpenApiClient openApiClient = new OpenApiClient();
+        openApiClient.setApiKey(openApiClientProperties.getApiKey());
+        return openApiClient;
     }
 }

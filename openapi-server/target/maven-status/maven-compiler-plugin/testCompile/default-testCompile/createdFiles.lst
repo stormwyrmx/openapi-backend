@@ -1,5 +1,0 @@
-com\weng\openapiserver\client\HttpClientTest.class
-com\weng\openapiserver\model\dto\auth\LoginRequestTest.class
-com\weng\openapiserver\OpenApiServerApplicationTests.class
-com\weng\openapiserver\common\ResultCodeEnumTest.class
-com\weng\openapiserver\controller\AuthControllerTest.class

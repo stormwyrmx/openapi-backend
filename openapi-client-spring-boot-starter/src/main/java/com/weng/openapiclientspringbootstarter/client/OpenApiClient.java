@@ -2,6 +2,7 @@ package com.weng.openapiclientspringbootstarter.client;
 
 import com.google.gson.Gson;
 import com.weng.openapiclientspringbootstarter.utils.SignUtil;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.Header;
 import org.apache.http.NameValuePair;
@@ -25,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@Data
 public class OpenApiClient
 {
-    private final String apiKey;
+    private String apiKey;
     static final int TIMEOUT_MSEC = 5 * 1000;
 
     /**

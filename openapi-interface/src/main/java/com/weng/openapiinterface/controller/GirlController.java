@@ -43,7 +43,7 @@ public class GirlController
         {
             throw new RuntimeException("请求头不完整");
         }
-        //todo 查询数据库，查看是否有和sign匹配的用户。检验随机数和时间戳是否合法
+        //todo 检验随机数是否合法
         User user = getUserBySign(sign);
         if (user==null)
         {

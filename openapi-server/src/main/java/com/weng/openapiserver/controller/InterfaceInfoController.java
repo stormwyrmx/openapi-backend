@@ -7,6 +7,7 @@ import com.weng.openapiserver.common.Result;
 import com.weng.openapiserver.common.ResultCodeEnum;
 import com.weng.openapiserver.exception.BusinessException;
 import com.weng.openapiserver.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.weng.openapiserver.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.weng.openapiserver.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.weng.openapiserver.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.weng.openapiserver.model.dto.page.PageRequest;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/interfaceInfo")
@@ -73,8 +75,8 @@ public class InterfaceInfoController
     @PreAuthorize("hasAuthority('ADMIN')")
     //因为是路径参数，所以id一定会有值，不可能为null，所以这里校验是否大于0即可
     public Result<Boolean> deleteInterfaceInfo(@Min(value = 1,message = "id必须大于0") @PathVariable Long id) {
-        //判断是否能够删除
-        interfaceInfoService.isQualified(id);
+        //判断是否存在
+        interfaceInfoService.isExist(id);
         boolean flag = interfaceInfoService.removeById(id);
         return Result.success(flag);
     }
@@ -92,8 +94,8 @@ public class InterfaceInfoController
         BeanUtils.copyProperties(interfaceInfoUpdateRequest, interfaceInfo);
         //参数校验(这里已经被@Validated注解校验过了)
 //        interfaceInfoService.validInterfaceInfo(interfaceInfo);
-        //判断是否能够修改
-        interfaceInfoService.isQualified(interfaceInfo.getId());
+        //判断是否存在
+        interfaceInfoService.isExist(interfaceInfo.getId());
         interfaceInfo.setUpdateTime(LocalDateTime.now());
         boolean flag = interfaceInfoService.updateById(interfaceInfo);
         return Result.success(flag);
@@ -109,13 +111,10 @@ public class InterfaceInfoController
     @PreAuthorize("hasAuthority('ADMIN')")
     public Result<Boolean> onlineInterfaceInfo(@Min(value = 1,message = "id必须大于0") @PathVariable Long id) throws IOException
     {
-        //判断是否能够修改
-        InterfaceInfo info = interfaceInfoService.isQualified(id);
-        //判断接口是否能够调用
-        String method = info.getMethod();
-        String url = info.getUrl();
-        String requestParam = info.getRequestParam();
-        String result = interfaceInfoService.invokeInterfaceInfo(method, url, requestParam);
+        //判断是否存在
+        InterfaceInfo info = interfaceInfoService.isExist(id);
+        //调用接口，这里使用接口默认的requestParam
+        String result = interfaceInfoService.invokeInterfaceInfo(info.getMethod(), info.getUrl(), info.getRequestParam());
         if (!StringUtils.hasText(result))
         {
             throw new BusinessException(ResultCodeEnum.SYSTEM_ERROR,"接口验证失败");
@@ -138,8 +137,8 @@ public class InterfaceInfoController
     @PutMapping("/offline/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Result<Boolean> offlineInterfaceInfo(@Min(value = 1,message = "id必须大于0") @PathVariable Long id) {
-        //判断是否能够修改
-        interfaceInfoService.isQualified(id);
+        //判断是否存在
+        interfaceInfoService.isExist(id);
         //修改接口状态
         InterfaceInfo interfaceInfo = InterfaceInfo.builder()
                 .id(id)
@@ -147,6 +146,26 @@ public class InterfaceInfoController
                 .build();
         boolean flag = interfaceInfoService.updateById(interfaceInfo);
         return Result.success(flag);
+    }
+
+    @PostMapping("/invoke")
+    public Result<String> invokeInterfaceInfo(@Validated @RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest) throws IOException
+    {
+        //判断是否存在
+        InterfaceInfo info = interfaceInfoService.isExist(interfaceInfoInvokeRequest.id());
+        //判断接口状态
+        if(!Objects.equals(info.getStatus(), InterfaceInfoEnum.ONLINE.getCode()))
+        {
+            throw new BusinessException(ResultCodeEnum.OPERATION_ERROR,"接口已关闭");
+        }
+        //InterfaceInfoInvokeRequest仅包含了id和requestParam。调用时仅允许用户改变requestParam
+        //调用接口
+        String result = interfaceInfoService.invokeInterfaceInfo(info.getMethod(), info.getUrl(), interfaceInfoInvokeRequest.requestParam());
+        if (!StringUtils.hasText(result))
+        {
+            throw new BusinessException(ResultCodeEnum.SYSTEM_ERROR,"接口验证失败");
+        }
+        return Result.success(result);
     }
 
     /**

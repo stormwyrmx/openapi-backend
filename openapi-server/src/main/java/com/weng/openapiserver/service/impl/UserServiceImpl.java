@@ -20,8 +20,11 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
+import java.security.SecureRandom;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
@@ -100,12 +103,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = User.builder()
                 .username(registerRequest.username())
                 .password(passwordEncoder.encode(registerRequest.password()))
+                .apiKey(generateApiKey(registerRequest.username()))
                 //role为null，不插入到数据库中，因为是动态sql。判断如果为null，就不会执行这个字段的插入
                 .role(registerRequest.role()==null?null:registerRequest.role().name())//这里的role是枚举类型，name()方法返回枚举常量的名称
                 .build();
         userMapper.insert(user);//如果插入失败，它会抛出异常.而不是返回一个负数
 
         return user.getId();
+    }
+
+    /**
+     * 根据用户信息，生成apiKey
+     * @return
+     */
+    private String generateApiKey(String username)
+    {
+        //todo 用户申请签名，而不是注册时生成签名
+        String s = DigestUtils.md5DigestAsHex((username + new SecureRandom().nextInt()).getBytes());
+        return "api-"+s;
     }
 }
 

@@ -11,7 +11,7 @@ import java.io.IOException;
 * @createDate 2024-01-01 16:53:33
 */
 public interface InterfaceInfoService extends IService<InterfaceInfo> {
-    InterfaceInfo isQualified(Long id);
+    InterfaceInfo isExist(Long id);
 
     String invokeInterfaceInfo(String method, String url, String requestParam) throws IOException;
 }
