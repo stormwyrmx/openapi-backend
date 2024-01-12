@@ -24,6 +24,9 @@ public record InterfaceInfoAddRequest(
         @NotBlank(message = "接口请求类型不能为空")
         @Size(max = 10)
         String method,
+
+        @Size(max = 500)
+        String requestParam,
         @Size(max = 500)
         String requestHeader,
         @Size(max = 500)

@@ -15,6 +15,7 @@ import javax.xml.transform.sax.SAXSource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @SpringBootTest
 public class HttpClientTest
@@ -45,8 +46,8 @@ public class HttpClientTest
     {
         HashMap<String, String> paramMap = new HashMap<>();
         paramMap.put("name","husiqi");
-        String result = openApiClient.doGet("http://localhost:8081/api/girl/getGirlFriend", paramMap);
-        System.out.printf("result=====>"+result);
+        String result = openApiClient.doGet("http://localhost:8081/api/girl/getGirlFriends", paramMap);
+        System.out.println(result == null);
     }
     @Test
     public void testPost() throws IOException
@@ -55,7 +56,9 @@ public class HttpClientTest
         map.put("name","husiqi");
         map.put("age","17");
         String result = openApiClient.doPost4Json("http://localhost:8081/api/girl/changeToGirl", map);
-        System.out.println("result====>"+result);
+        System.out.println(result);
+        System.out.println(result == null);
+        System.out.println(Objects.equals(result, ""));
     }
 
 }

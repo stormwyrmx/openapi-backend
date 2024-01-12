@@ -41,7 +41,7 @@ public class OpenApiClient
         // 创建Httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
 
-        String result = "";
+        String resultString = "";
         CloseableHttpResponse response = null;
 
         try{
@@ -63,7 +63,7 @@ public class OpenApiClient
             //判断响应状态，若没有路径匹配，则返回404，不会抛出异常
             if(response.getStatusLine().getStatusCode() == 200){
                 //拿到响应体，转成字符串
-                result = EntityUtils.toString(response.getEntity(),"UTF-8");
+                resultString = EntityUtils.toString(response.getEntity(),"UTF-8");
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -76,7 +76,7 @@ public class OpenApiClient
             }
         }
 
-        return result;
+        return resultString;
     }
 
     /**
@@ -112,8 +112,11 @@ public class OpenApiClient
 
             // 执行http请求
             response = httpClient.execute(httpPost);
-
-            resultString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            //判断响应状态，若没有路径匹配，则返回404，不会抛出异常
+            if(response.getStatusLine().getStatusCode() == 200){
+                //拿到响应体，转成字符串
+                resultString = EntityUtils.toString(response.getEntity(),"UTF-8");
+            }
         } catch (Exception e) {
             throw e;
         } finally {
@@ -161,8 +164,11 @@ public class OpenApiClient
 
             // 执行http请求
             response = httpClient.execute(httpPost);
-
-            resultString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            //判断响应状态，若没有路径匹配，则返回404，不会抛出异常
+            if(response.getStatusLine().getStatusCode() == 200){
+                //拿到响应体，转成字符串
+                resultString = EntityUtils.toString(response.getEntity(),"UTF-8");
+            }
         } catch (Exception e) {
             throw e;
         } finally {
@@ -187,7 +193,7 @@ public class OpenApiClient
         Header[] headers = new Header[3];
         String sign = SignUtil.generateSign(apiKey);
         headers[0] = new BasicHeader("sign", sign);
-        //todo 标准化随机数和时间
+        //todo 标准化随机数
         headers[1]=new BasicHeader("nonce", UUID.randomUUID().toString());
         headers[2]=new BasicHeader("timestamp",String.valueOf(System.currentTimeMillis()));
         return headers;

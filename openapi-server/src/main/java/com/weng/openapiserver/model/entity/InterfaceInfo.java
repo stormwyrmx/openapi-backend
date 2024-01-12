@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,6 +19,9 @@ import java.time.LocalDateTime;
  */
 @TableName(value ="interface_info")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class InterfaceInfo implements Serializable {
     /**
      * 主键 
@@ -42,6 +48,11 @@ public class InterfaceInfo implements Serializable {
      * 请求类型
      */
     private String method;
+
+    /**
+     * 请求参数
+     */
+    private String requestParam;
 
     /**
      * 请求头

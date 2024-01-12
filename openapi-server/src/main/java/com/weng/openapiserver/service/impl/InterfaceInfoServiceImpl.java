@@ -1,6 +1,8 @@
 package com.weng.openapiserver.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
+import com.weng.openapiclientspringbootstarter.client.OpenApiClient;
 import com.weng.openapiserver.common.ResultCodeEnum;
 import com.weng.openapiserver.common.RoleEnum;
 import com.weng.openapiserver.exception.BusinessException;
@@ -12,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -22,17 +27,17 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
-    implements InterfaceInfoService
-{
+    implements InterfaceInfoService {
     private final InterfaceInfoMapper interfaceInfoMapper;
-
+    private final OpenApiClient openApiClient;
+    private final Gson gson;
     /**
      * 判断是否能够删除或修改
-     * @param id
+     * @param id 接口id
+     * @return 根据id查询到的接口信息
      */
     @Override
-    public void isQualified(Long id)
-    {
+    public InterfaceInfo isQualified(Long id) {
         // 判断是否存在
 //        如果没有找到匹配的记录，该方法将返回 null，而不是抛出异常
         InterfaceInfo interfaceInfo = interfaceInfoMapper.selectById(id);
@@ -46,6 +51,34 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
                 !Objects.equals(user.getRole(), RoleEnum.ADMIN.toString())) {
             throw new BusinessException(ResultCodeEnum.NO_AUTH_ERROR);
         }
+        return interfaceInfo;
+    }
+
+    @Override
+    public String invokeInterfaceInfo(String method, String url, String requestParam) throws IOException {
+        String result = "";
+        Map<String,String> map=new HashMap<>();
+        switch (method)
+        {
+            case "GET":
+                String[] pairs = requestParam.split(",");
+                for (String pair : pairs) {
+                    String[] keyValue = pair.split("=");
+                    map.put(keyValue[0], keyValue[1]);
+                }
+                //如果调用的url不存在，返回的是空字符串
+                result = openApiClient.doGet(url, map);
+                break;
+            case "POST":
+                map = gson.fromJson(requestParam, Map.class);
+                //如果调用的url不存在，返回的是空字符串
+                result = openApiClient.doPost4Json(url, map);
+                break;
+            case "PUT", "DELETE":
+            default:
+                break;
+        }
+        return result;
     }
 }
 

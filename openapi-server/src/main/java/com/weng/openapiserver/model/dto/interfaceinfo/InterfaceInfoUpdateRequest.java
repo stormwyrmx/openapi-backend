@@ -42,6 +42,9 @@ public record InterfaceInfoUpdateRequest(
         @Size(max = 10)
         String method,
 
+        @Size(max = 500)
+        String requestParam,
+
         /**
          * 请求头
          */
@@ -52,13 +55,7 @@ public record InterfaceInfoUpdateRequest(
          * 响应头
          */
         @Size(max = 500)
-        String responseHeader,
+        String responseHeader
 
-        /**
-         * 接口状态（0-默认关闭，1-开启）
-         */
-        @Min(0)
-        @Max(1)
-        Integer status
 ) {
 }

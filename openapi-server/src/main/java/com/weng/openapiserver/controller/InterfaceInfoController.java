@@ -2,7 +2,10 @@ package com.weng.openapiserver.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.weng.openapiserver.common.InterfaceInfoEnum;
 import com.weng.openapiserver.common.Result;
+import com.weng.openapiserver.common.ResultCodeEnum;
+import com.weng.openapiserver.exception.BusinessException;
 import com.weng.openapiserver.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.weng.openapiserver.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.weng.openapiserver.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
@@ -16,9 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,6 +45,7 @@ public class InterfaceInfoController
      * @return
      */
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")/*or #interfaceInfo.userId == authentication.principal.id*/
     public Result<Long> addInterfaceInfo(@RequestBody @Validated InterfaceInfoAddRequest interfaceInfoAddRequest,
                                          @AuthenticationPrincipal User user){
         //@RequestBody默认不接受空的数据，也就是什么都不传=null。
@@ -69,8 +75,8 @@ public class InterfaceInfoController
     public Result<Boolean> deleteInterfaceInfo(@Min(value = 1,message = "id必须大于0") @PathVariable Long id) {
         //判断是否能够删除
         interfaceInfoService.isQualified(id);
-        boolean result = interfaceInfoService.removeById(id);
-        return Result.success(result);
+        boolean flag = interfaceInfoService.removeById(id);
+        return Result.success(flag);
     }
 
     /**
@@ -80,7 +86,7 @@ public class InterfaceInfoController
      * @return
      */
     @PutMapping
-    @PreAuthorize("hasAuthority('ADMIN')")/*or #interfaceInfo.userId == authentication.principal.id*/
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Result<Boolean> updateInterfaceInfo(@Validated @RequestBody InterfaceInfoUpdateRequest interfaceInfoUpdateRequest) {
         InterfaceInfo interfaceInfo = new InterfaceInfo();
         BeanUtils.copyProperties(interfaceInfoUpdateRequest, interfaceInfo);
@@ -89,8 +95,58 @@ public class InterfaceInfoController
         //判断是否能够修改
         interfaceInfoService.isQualified(interfaceInfo.getId());
         interfaceInfo.setUpdateTime(LocalDateTime.now());
-        boolean result = interfaceInfoService.updateById(interfaceInfo);
-        return Result.success(result);
+        boolean flag = interfaceInfoService.updateById(interfaceInfo);
+        return Result.success(flag);
+    }
+
+    /**
+     * 发布接口
+     *
+     * @param
+     * @return
+     */
+    @PutMapping("/online/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Result<Boolean> onlineInterfaceInfo(@Min(value = 1,message = "id必须大于0") @PathVariable Long id) throws IOException
+    {
+        //判断是否能够修改
+        InterfaceInfo info = interfaceInfoService.isQualified(id);
+        //判断接口是否能够调用
+        String method = info.getMethod();
+        String url = info.getUrl();
+        String requestParam = info.getRequestParam();
+        String result = interfaceInfoService.invokeInterfaceInfo(method, url, requestParam);
+        if (!StringUtils.hasText(result))
+        {
+            throw new BusinessException(ResultCodeEnum.SYSTEM_ERROR,"接口验证失败");
+        }
+        //修改接口状态
+        InterfaceInfo interfaceInfo = InterfaceInfo.builder()
+                .id(id)
+                .status(InterfaceInfoEnum.ONLINE.getCode())
+                .build();
+        boolean flag = interfaceInfoService.updateById(interfaceInfo);
+        return Result.success(flag);
+    }
+
+    /**
+     * 下线接口
+     *
+     * @param
+     * @return
+     */
+    @PutMapping("/offline/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Result<Boolean> offlineInterfaceInfo(@Min(value = 1,message = "id必须大于0") @PathVariable Long id) {
+        //判断是否能够修改
+        interfaceInfoService.isQualified(id);
+        //修改接口状态
+        InterfaceInfo interfaceInfo = InterfaceInfo.builder()
+                .id(id)
+                .status(InterfaceInfoEnum.OFFLINE.getCode())
+                .build();
+        boolean flag = interfaceInfoService.updateById(interfaceInfo);
+        return Result.success(flag);
     }
 
     /**
@@ -138,5 +194,7 @@ public class InterfaceInfoController
     }
 
     // endregion
+
+
 
 }
