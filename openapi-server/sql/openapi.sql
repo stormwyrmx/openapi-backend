@@ -36,6 +36,7 @@ CREATE TABLE `interface_info` (
   `url` varchar(510) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '接口url地址',
   `description` varchar(510) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '接口描述',
   `method` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '请求类型',
+  `request_param` text COLLATE utf8mb4_unicode_ci COMMENT '请求参数',
   `request_header` text COLLATE utf8mb4_unicode_ci COMMENT '请求头',
   `response_header` text COLLATE utf8mb4_unicode_ci COMMENT '响应头',
   `user_id` bigint NOT NULL COMMENT '创建人',
@@ -44,7 +45,7 @@ CREATE TABLE `interface_info` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NOT NULL DEFAULT '0' COMMENT '逻辑删除（0-正常，1-删除）',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='接口信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='接口信息表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -53,7 +54,7 @@ CREATE TABLE `interface_info` (
 
 LOCK TABLES `interface_info` WRITE;
 /*!40000 ALTER TABLE `interface_info` DISABLE KEYS */;
-INSERT INTO `interface_info` VALUES (1,'随机获取一个可爱的女孩子！','www.kawayigirl.com','555，我就是想要一个可爱的女孩子麻~','POST','','',3,0,'2024-01-03 15:53:37','2024-01-10 20:18:59',0),(2,'随机获取头像','www.getAvatar.com','','POST','','',3,0,'2024-01-03 16:11:38','2024-01-03 16:11:38',1),(3,'获取你的可爱的女朋友','www.getGirlfriend.com','世界奇奇怪怪，yui可可爱爱','POST','',NULL,3,0,'2024-01-03 16:13:37','2024-01-10 20:34:00',0),(4,'转生成为女孩子！','http://localhost:8080/api/chageToGirl','不可以欺负可爱的女孩子！','POST','Header','Header',1,0,'2024-01-08 15:48:54','2024-01-11 22:25:17',0);
+INSERT INTO `interface_info` VALUES (1,'随机获取一个可爱的女孩子！','www.kawayigirl.com','555，我就是要和可爱的女孩子贴贴嘛~','POST',NULL,'','',3,0,'2024-01-03 15:53:37','2024-01-12 22:43:58',0),(2,'随机获取头像','www.getAvatar.com','','GET',NULL,'','',3,0,'2024-01-03 16:11:38','2024-01-12 22:45:03',1),(3,'获取你的可爱的女朋友','http://localhost:8081/api/girl/getGirlFriend','世界奇奇怪怪，mio可可爱爱！','GET','name=mio','',NULL,3,1,'2024-01-03 16:13:37','2024-01-13 18:18:50',0),(4,'转生成为女孩子！','http://localhost:8081/api/girl/changeToGirl','不可以欺负女孩子！','POST','{\n  \"name\": \"Eru\",\n  \"age\": \"16\"\n}','Header','Header',1,1,'2024-01-08 15:48:54','2024-01-13 18:18:38',0),(5,'taco','getTaco.com',NULL,'get',NULL,NULL,NULL,1,0,'2024-01-12 22:48:45','2024-01-12 22:50:14',1),(6,'taco','getTaco.com',NULL,'EAT',NULL,NULL,NULL,1,0,'2024-01-12 22:51:13','2024-01-12 22:51:13',1);
 /*!40000 ALTER TABLE `interface_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,7 +86,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'weng','$2a$10$dolcc65nCVo0IvyGNoRjv.jqqhVsCLRW7ya3LYtKU7Ql9rbxTpvCG','wengyehao123','ADMIN',0,'2024-01-01 23:35:03','2024-01-01 23:35:03',0),(2,'husiqi','$2a$10$dhMUdBchATW/.KqrJKUFZuPvOfQagX/x0rK3XMHXOeRFTL1YDycgi',NULL,'USER',0,'2024-01-03 13:44:47','2024-01-03 13:44:47',0),(3,'xiaoqiqi','$2a$10$H1YH8SbGLR5hygCKnkRnau48nsE/KY6B1UxbHSvirpKggzjYoChq6',NULL,'ADMIN',0,'2024-01-03 13:48:03','2024-01-03 13:48:03',0);
+INSERT INTO `user` VALUES (1,'weng','$2a$10$dolcc65nCVo0IvyGNoRjv.jqqhVsCLRW7ya3LYtKU7Ql9rbxTpvCG','api-ee9cb04317251601d9a15e8c35312d24','ADMIN',0,'2024-01-01 23:35:03','2024-01-01 23:35:03',0),(2,'husiqi','$2a$10$dhMUdBchATW/.KqrJKUFZuPvOfQagX/x0rK3XMHXOeRFTL1YDycgi',NULL,'USER',0,'2024-01-03 13:44:47','2024-01-03 13:44:47',0),(3,'xiaoqiqi','$2a$10$H1YH8SbGLR5hygCKnkRnau48nsE/KY6B1UxbHSvirpKggzjYoChq6',NULL,'ADMIN',0,'2024-01-03 13:48:03','2024-01-03 13:48:03',0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -98,4 +99,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-12 15:45:10
+-- Dump completed on 2024-01-14 19:44:10
