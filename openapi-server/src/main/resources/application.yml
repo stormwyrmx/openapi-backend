@@ -33,10 +33,10 @@ logging:
           mapper: debug
           service: debug
           controller: debug
-# api key配置
+# api key配置，给粗默认的api key
 openapi:
   client:
-    api-key: wengyehao123
+    api-key: api-ee9cb04317251601d9a15e8c35312d24
 # jwt配置
 application:
   security:

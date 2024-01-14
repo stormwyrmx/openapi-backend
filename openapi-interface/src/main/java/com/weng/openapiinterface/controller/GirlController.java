@@ -5,6 +5,8 @@ import com.weng.openapiinterface.entity.User;
 import com.weng.openapiinterface.mapper.UserMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/girl")
@@ -19,6 +22,9 @@ public class GirlController
 {
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
     @GetMapping("/getGirlFriend")
     public String getGirlFriend(String name, HttpServletRequest request)
     {
@@ -43,44 +49,50 @@ public class GirlController
         {
             throw new RuntimeException("请求头不完整");
         }
-        //todo 检验随机数是否合法
-        User user = getUserBySign(sign);
-        if (user==null)
-        {
-            throw new RuntimeException("用户不存在");
-        }
-
-//        if (nonce>10000)
-//        {
-//
-//        }
-        boolean result = checkTimestamp(timestamp);
-        if (!result)
-        {
-            throw new RuntimeException("时间戳不合法");
-        }
+        //todo 添加计费，统计每个用户接口调用次数等
+        checkSign(sign);
+        checkNonce(nonce);
+        checkTimestamp(timestamp);
     }
-    
-    private User getUserBySign(String sign)
+
+    private void checkSign(String sign)
     {
         List<User> users = userMapper.selectList(null);
         for (User user : users)
         {
             if (DigestUtils.md5DigestAsHex((user.getApiKey()).getBytes()).equals(sign))
             {
-                return user;
+                return;
             }
         }
-        return null;
+        throw new RuntimeException("用户不存在");
     }
-    
-    private boolean checkTimestamp(String timestamp)
+
+    /**
+     * 检查nonce是否存在，若存在则抛出异常。若不存在则将nonce存入redis，并设置过期时间为5分钟。和时间戳一起判断是否重放攻击
+     * @param nonce
+     */
+    private void checkNonce(String nonce)
     {
-        long timeMillis= Long.parseLong(timestamp);
+        HashOperations<String, String, String> hashOperations = stringRedisTemplate.opsForHash();
+        Set<String> keys = hashOperations.keys("nonce");
+        if (keys.contains(nonce))
+        {
+            throw new RuntimeException("nonce已存在");
+        }
+        hashOperations.put("nonce", nonce, "-");
+        //设置过期时间为5分钟
+        stringRedisTemplate.expire("nonce", Duration.ofMinutes(5));
+    }
+
+    private void checkTimestamp(String timestamp)
+    {
+        long timeMillis = Long.parseLong(timestamp);
         long currentTimeMillis = System.currentTimeMillis();
         //判断时间戳是否在5分钟内
-        return currentTimeMillis - timeMillis >=0 && currentTimeMillis - timeMillis<= 1000 * 60 * 5;
+        if (currentTimeMillis - timeMillis < 0 || currentTimeMillis - timeMillis > 1000 * 60 * 5)
+        {
+            throw new RuntimeException("时间戳不合法");
+        }
     }
-    
-    
 }

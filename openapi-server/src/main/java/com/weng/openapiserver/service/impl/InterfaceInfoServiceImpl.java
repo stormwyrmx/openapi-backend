@@ -60,6 +60,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
     public String invokeInterfaceInfo(String method, String url, String requestParam) throws IOException {
         String result = "";
         Map<String,String> map=new HashMap<>();
+        //获取当前登录用户的apiKey
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         openApiClient.setApiKey(user.getApiKey());
         switch (method)

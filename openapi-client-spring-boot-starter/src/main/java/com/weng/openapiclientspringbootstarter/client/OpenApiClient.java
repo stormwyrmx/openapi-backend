@@ -194,7 +194,6 @@ public class OpenApiClient
         Header[] headers = new Header[3];
         String sign = SignUtil.generateSign(apiKey);
         headers[0] = new BasicHeader("sign", sign);
-        //todo 标准化随机数
         headers[1]=new BasicHeader("nonce", UUID.randomUUID().toString());
         headers[2]=new BasicHeader("timestamp",String.valueOf(System.currentTimeMillis()));
         return headers;

@@ -47,8 +47,8 @@ public class HttpClientTest
     {
         HashMap<String, String> paramMap = new HashMap<>();
         paramMap.put("name","husiqi");
-        String result = openApiClient.doGet("http://localhost:8081/api/girl/getGirlFriends", paramMap);
-        System.out.println(result == null);
+        String result = openApiClient.doGet("http://localhost:8081/api/girl/getGirlFriend", paramMap);
+        System.out.println(result);
     }
     @Test
     public void testPost() throws IOException
