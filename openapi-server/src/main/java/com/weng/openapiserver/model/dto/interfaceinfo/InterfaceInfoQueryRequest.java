@@ -54,6 +54,6 @@ public class InterfaceInfoQueryRequest extends PageRequest {
     /**
      * 创建人
      */
-    private Long userId;
+    private Long createUser;
 
 }

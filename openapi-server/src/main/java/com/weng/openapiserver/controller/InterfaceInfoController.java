@@ -61,7 +61,7 @@ public class InterfaceInfoController
         InterfaceInfo interfaceInfo = new InterfaceInfo();
         BeanUtils.copyProperties(interfaceInfoAddRequest, interfaceInfo);
         //新增
-        interfaceInfo.setUserId(user.getId());
+        interfaceInfo.setCreateUser(user.getId());
         interfaceInfoService.save(interfaceInfo);//MyBatis-Plus 会直接抛出异常，返回的false没什么用。
         return Result.success(interfaceInfo.getId());
     }
@@ -90,16 +90,63 @@ public class InterfaceInfoController
     @PutMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public Result<Boolean> updateInterfaceInfo(@Validated @RequestBody InterfaceInfoUpdateRequest interfaceInfoUpdateRequest) {
+        //判断是否存在
+        interfaceInfoService.isExist(interfaceInfoUpdateRequest.id());
         InterfaceInfo interfaceInfo = new InterfaceInfo();
-        BeanUtils.copyProperties(interfaceInfoUpdateRequest, interfaceInfo);
         //参数校验(这里已经被@Validated注解校验过了)
 //        interfaceInfoService.validInterfaceInfo(interfaceInfo);
-        //判断是否存在
-        interfaceInfoService.isExist(interfaceInfo.getId());
+        BeanUtils.copyProperties(interfaceInfoUpdateRequest, interfaceInfo);
         interfaceInfo.setUpdateTime(LocalDateTime.now());
         boolean flag = interfaceInfoService.updateById(interfaceInfo);
         return Result.success(flag);
     }
+
+
+    /**
+     * 根据 id 查询
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<InterfaceInfo> getInterfaceInfoById(@Min(value = 1,message = "id必须大于0")
+                                                          @PathVariable Long id) {
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        return Result.success(interfaceInfo);
+    }
+
+    /**
+     * 获取列表
+     *
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<InterfaceInfo>> listInterfaceInfo(InterfaceInfoQueryRequest interfaceInfoQueryRequest) {
+        LambdaQueryWrapper<InterfaceInfo>lambdaQueryWrapper=new LambdaQueryWrapper<>();
+
+        List<InterfaceInfo> interfaceInfoList = interfaceInfoService.list(lambdaQueryWrapper);
+        return Result.success(interfaceInfoList);
+    }
+
+    /**
+     * 分页获取列表
+     *
+     *
+     * @param pageRequest
+     * @return
+     */
+    @GetMapping("/page")//pageRequest不可能为null，只可能为pageRequest(size=null,current=null)
+    public Result<Page<InterfaceInfo>> listInterfaceInfoByPage(@Validated PageRequest pageRequest) {
+        //请求参数进来先拼成一个对象，如果不传那么默认会拼成pageRequest(size=null,current=null)
+        //这个时候@Validated注解就会校验size和current。所以这里@NotNull注解就不起作用了，因为pageRequest不为null
+        LambdaQueryWrapper<InterfaceInfo>interfaceInfoLambdaQueryWrapper=new LambdaQueryWrapper<>();
+        interfaceInfoLambdaQueryWrapper.orderByAsc(InterfaceInfo::getCreateTime);
+        Page<InterfaceInfo>interfaceInfoPage=new Page<>(pageRequest.getCurrent(),pageRequest.getSize());
+        interfaceInfoService.page(interfaceInfoPage,interfaceInfoLambdaQueryWrapper);
+        return Result.success(interfaceInfoPage);
+    }
+
+    // endregion
 
     /**
      * 发布接口
@@ -149,7 +196,7 @@ public class InterfaceInfoController
     }
 
     @PostMapping("/invoke")
-    public Result<String> invokeInterfaceInfo(@Validated @RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest) throws IOException
+    public Result<String> invokeInterfaceInfo(@Validated @RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,@AuthenticationPrincipal User user) throws IOException
     {
         //判断是否存在
         InterfaceInfo info = interfaceInfoService.isExist(interfaceInfoInvokeRequest.id());
@@ -165,55 +212,14 @@ public class InterfaceInfoController
         {
             throw new BusinessException(ResultCodeEnum.SYSTEM_ERROR,"接口验证失败");
         }
+        //用户调用接口成功后，将调用接口的用户的接口调用次数+1（不是接口创建者的调用次数+1）
+        Integer count = interfaceInfoService.addInvokeCount(info.getId(), user.getId());
+        if (count<=0)
+        {
+            throw new BusinessException(ResultCodeEnum.SYSTEM_ERROR,"接口调用次数更新失败");
+        }
         return Result.success(result);
     }
-
-    /**
-     * 根据 id 查询
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/{id}")
-    public Result<InterfaceInfo> getInterfaceInfoById(@Min(value = 1,message = "id必须大于0")
-                                                          @PathVariable Long id) {
-        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
-        return Result.success(interfaceInfo);
-    }
-
-    /**
-     * 获取列表
-     *
-     * @return
-     */
-    @GetMapping("/list")
-    public Result<List<InterfaceInfo>> listInterfaceInfo(InterfaceInfoQueryRequest interfaceInfoQueryRequest) {
-        LambdaQueryWrapper<InterfaceInfo>lambdaQueryWrapper=new LambdaQueryWrapper<>();
-
-        List<InterfaceInfo> interfaceInfoList = interfaceInfoService.list(lambdaQueryWrapper);
-        return Result.success(interfaceInfoList);
-    }
-
-    /**
-     * 分页获取列表
-     *
-     *
-     * @param pageRequest
-     * @return
-     */
-    @GetMapping("/page")//pageRequest不可能为null，只可能为pageRequest(size=null,current=null)
-    public Result<Page<InterfaceInfo>> listInterfaceInfoByPage(@Validated PageRequest pageRequest) {
-        //请求参数进来先拼成一个对象，如果不传那么默认会拼成pageRequest(size=null,current=null)
-        //这个时候@Validated注解就会校验size和current。所以这里@NotNull注解就不起作用了，因为pageRequest不为null
-        LambdaQueryWrapper<InterfaceInfo>interfaceInfoLambdaQueryWrapper=new LambdaQueryWrapper<>();
-        interfaceInfoLambdaQueryWrapper.orderByAsc(InterfaceInfo::getCreateTime);
-        Page<InterfaceInfo>interfaceInfoPage=new Page<>(pageRequest.getCurrent(),pageRequest.getSize());
-        interfaceInfoService.page(interfaceInfoPage,interfaceInfoLambdaQueryWrapper);
-        return Result.success(interfaceInfoPage);
-    }
-
-    // endregion
-
 
 
 }

@@ -1,5 +1,6 @@
 package com.weng.openapiserver.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
 import com.weng.openapiclientspringbootstarter.client.OpenApiClient;
@@ -7,8 +8,10 @@ import com.weng.openapiserver.common.ResultCodeEnum;
 import com.weng.openapiserver.common.RoleEnum;
 import com.weng.openapiserver.exception.BusinessException;
 import com.weng.openapiserver.mapper.InterfaceInfoMapper;
+import com.weng.openapiserver.mapper.UserInterfaceInfoMapper;
 import com.weng.openapiserver.model.entity.InterfaceInfo;
 import com.weng.openapiserver.model.entity.User;
+import com.weng.openapiserver.model.entity.UserInterfaceInfo;
 import com.weng.openapiserver.service.InterfaceInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +33,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
     implements InterfaceInfoService {
 
     private final InterfaceInfoMapper interfaceInfoMapper;
+    private final UserInterfaceInfoMapper userInterfaceInfoMapper;
     private final OpenApiClient openApiClient;
     private final Gson gson;
     /**
@@ -45,13 +49,6 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         if (interfaceInfo == null) {
             throw new BusinessException(ResultCodeEnum.NOT_FOUND_ERROR);
         }
-//        // 仅本人或管理员可删除
-//        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        //不是本人，也不是管理员时，抛出异常
-//        if (!interfaceInfo.getUserId().equals(user.getId()) &&
-//                !Objects.equals(user.getRole(), RoleEnum.ADMIN.toString())) {
-//            throw new BusinessException(ResultCodeEnum.NO_AUTH_ERROR);
-//        }
         return interfaceInfo;
     }
 
@@ -84,6 +81,16 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
                 break;
         }
         return result;
+    }
+
+    @Override
+    public Integer addInvokeCount(Long interfaceInfoId, Long userId)
+    {
+        LambdaUpdateWrapper<UserInterfaceInfo> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.setSql("total_num = total_num + 1, left_num = left_num - 1")
+                .eq(UserInterfaceInfo::getUserId, userId)
+                .eq(UserInterfaceInfo::getInterfaceInfoId, interfaceInfoId);
+        return userInterfaceInfoMapper.update(updateWrapper);
     }
 }
 

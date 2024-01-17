@@ -76,6 +76,7 @@ public class GirlController
     {
         HashOperations<String, String, String> hashOperations = stringRedisTemplate.opsForHash();
         Set<String> keys = hashOperations.keys("nonce");
+        //判断随机数是否存在于redis中
         if (keys.contains(nonce))
         {
             throw new RuntimeException("nonce已存在");

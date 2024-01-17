@@ -67,7 +67,7 @@ public class InterfaceInfo implements Serializable {
     /**
      * 创建人
      */
-    private Long userId;
+    private Long createUser;
 
     /**
      * 接口状态（0-默认关闭，1-开启）

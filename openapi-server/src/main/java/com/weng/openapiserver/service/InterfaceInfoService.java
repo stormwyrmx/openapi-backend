@@ -14,4 +14,6 @@ public interface InterfaceInfoService extends IService<InterfaceInfo> {
     InterfaceInfo isExist(Long id);
 
     String invokeInterfaceInfo(String method, String url, String requestParam) throws IOException;
+
+    Integer addInvokeCount(Long interfaceInfoId, Long userId);
 }
