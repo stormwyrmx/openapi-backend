@@ -1,5 +1,6 @@
 package com.weng.openapiserver.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -86,8 +88,23 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
     @Override
     public Integer addInvokeCount(Long interfaceInfoId, Long userId)
     {
+        //如果用户没有调用过该接口，则直接开通特定接口调用权限，为它创建一条新的记录
+        LambdaQueryWrapper<UserInterfaceInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserInterfaceInfo::getUserId, userId)
+                .eq(UserInterfaceInfo::getInterfaceInfoId, interfaceInfoId);
+        UserInterfaceInfo userInterfaceInfo = userInterfaceInfoMapper.selectOne(queryWrapper);
+        if (userInterfaceInfo == null) {
+            userInterfaceInfo = UserInterfaceInfo.builder()
+                    .userId(userId)
+                    .interfaceInfoId(interfaceInfoId)
+                    .leftNum(200L)
+                    .build();
+            userInterfaceInfoMapper.insert(userInterfaceInfo);
+        }
+        //如果用户没有调用过该接口，则直接开通特定接口调用权限，为它创建一条新的记录
         LambdaUpdateWrapper<UserInterfaceInfo> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.setSql("total_num = total_num + 1, left_num = left_num - 1")
+                .set(UserInterfaceInfo::getUpdateTime, LocalDateTime.now())
                 .eq(UserInterfaceInfo::getUserId, userId)
                 .eq(UserInterfaceInfo::getInterfaceInfoId, interfaceInfoId);
         return userInterfaceInfoMapper.update(updateWrapper);

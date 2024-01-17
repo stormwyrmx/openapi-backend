@@ -14,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -61,6 +63,7 @@ public class UserController
 
         UserInterfaceInfo userInterfaceInfo = new UserInterfaceInfo();
         BeanUtils.copyProperties(userInterfaceInfoUpdateRequest, userInterfaceInfo);
+        userInterfaceInfo.setUpdateTime(LocalDateTime.now());
         //修改,增加剩余调用次数或者禁用用户调用特定接口
         boolean flag = userInterfaceInfoService.updateById(userInterfaceInfo);//MyBatis-Plus 会直接抛出异常，返回的false没什么用。
         return Result.success(flag);
