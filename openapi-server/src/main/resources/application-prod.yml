@@ -2,17 +2,17 @@ spring:
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.13.0.128:3306/openapi
+    url: jdbc:mysql://47.115.231.76:3306/openapi
     username: root
     password: wengyehao123
 #  # Redis 配置
 #  data:
 #    redis:
 #      database: 0
-#      host: 10.13.0.128
+#      host: 47.115.231.76
 #      port: 6379
 #  # Elasticsearch 配置
 #  elasticsearch:
-#    uris: http://10.13.0.128:9200
+#    uris: http://47.115.231.76:9200
 #    username: root
 #    password: wengyehao123

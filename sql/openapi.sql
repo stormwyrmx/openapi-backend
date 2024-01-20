@@ -54,7 +54,7 @@ CREATE TABLE `interface_info` (
 
 LOCK TABLES `interface_info` WRITE;
 /*!40000 ALTER TABLE `interface_info` DISABLE KEYS */;
-INSERT INTO `interface_info` VALUES (1,'随机获取一个可爱的女孩子！','www.kawayigirl.com','555，我就是要和可爱的女孩子贴贴嘛~','POST',NULL,'','',3,0,'2024-01-03 15:53:37','2024-01-17 16:17:39',0),(2,'随机获取头像','www.getAvatar.com','','GET',NULL,'','',3,0,'2024-01-03 16:11:38','2024-01-12 22:45:03',1),(3,'获取你的可爱的女朋友','http://localhost:8081/api/girl/getGirlFriend','世界奇奇怪怪，mio可可爱爱！','GET','name=miojiang','',NULL,3,1,'2024-01-03 16:13:37','2024-01-17 16:17:47',0),(4,'转生成为女孩子！','http://localhost:8081/api/girl/changeToGirl','不可以欺负女孩子！','POST','{\n  \"name\": \"Eru\",\n  \"age\": \"16\"\n}','Header','Header',1,1,'2024-01-08 15:48:54','2024-01-13 18:18:38',0),(5,'taco','getTaco.com',NULL,'get',NULL,NULL,NULL,1,0,'2024-01-12 22:48:45','2024-01-12 22:50:14',1),(6,'taco','getTaco.com',NULL,'EAT',NULL,NULL,NULL,1,0,'2024-01-12 22:51:13','2024-01-12 22:51:13',1);
+INSERT INTO `interface_info` VALUES (1,'随机获取一个可爱的女孩子！','www.kawayigirl.com','555，我就是要和可爱的女孩子贴贴嘛~','POST',NULL,'','',3,0,'2024-01-03 15:53:37','2024-01-17 16:36:37',0),(2,'随机获取头像','www.getAvatar.com','','GET',NULL,'','',3,0,'2024-01-03 16:11:38','2024-01-12 22:45:03',1),(3,'获取你的可爱的女朋友','http://localhost:8081/api/girl/getGirlFriend','世界奇奇怪怪，mio可可爱爱！','GET','name=mio-jiang','',NULL,3,1,'2024-01-03 16:13:37','2024-01-17 16:36:46',0),(4,'转生成为女孩子！','http://localhost:8081/api/girl/changeToGirl','不可以欺负女孩子！','POST','{\n  \"name\": \"Eru\",\n  \"age\": \"16\"\n}','Header','Header',1,1,'2024-01-08 15:48:54','2024-01-13 18:18:38',0),(5,'taco','getTaco.com',NULL,'get',NULL,NULL,NULL,1,0,'2024-01-12 22:48:45','2024-01-12 22:50:14',1),(6,'taco','getTaco.com',NULL,'EAT',NULL,NULL,NULL,1,0,'2024-01-12 22:51:13','2024-01-12 22:51:13',1);
 /*!40000 ALTER TABLE `interface_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -108,7 +108,7 @@ CREATE TABLE `user_interface_info` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户调用接口关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户调用接口关系表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,7 +117,7 @@ CREATE TABLE `user_interface_info` (
 
 LOCK TABLES `user_interface_info` WRITE;
 /*!40000 ALTER TABLE `user_interface_info` DISABLE KEYS */;
-INSERT INTO `user_interface_info` VALUES (1,1,3,3,197,0,'2024-01-17 15:50:40','2024-01-17 15:50:40',0),(2,1,4,1,99,0,'2024-01-17 15:51:19','2024-01-17 15:51:19',0);
+INSERT INTO `user_interface_info` VALUES (1,1,3,4,196,0,'2024-01-17 15:50:40','2024-01-17 15:50:40',0),(2,1,4,2,98,0,'2024-01-17 15:51:19','2024-01-17 15:51:19',0),(3,5,3,2,198,0,'2024-01-17 19:55:37','2024-01-17 19:56:15',0);
 /*!40000 ALTER TABLE `user_interface_info` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -130,4 +130,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-01-17 16:24:01
+-- Dump completed on 2024-01-20 23:29:46

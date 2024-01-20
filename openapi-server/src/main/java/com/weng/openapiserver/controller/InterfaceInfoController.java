@@ -135,7 +135,7 @@ public class InterfaceInfoController
      * @param pageRequest
      * @return
      */
-    @GetMapping("/page")//pageRequest不可能为null，只可能为pageRequest(size=null,current=null)
+    @GetMapping(value = "/page")//pageRequest不可能为null，只可能为pageRequest(size=null,current=null)
     public Result<Page<InterfaceInfo>> listInterfaceInfoByPage(@Validated PageRequest pageRequest) {
         //请求参数进来先拼成一个对象，如果不传那么默认会拼成pageRequest(size=null,current=null)
         //这个时候@Validated注解就会校验size和current。所以这里@NotNull注解就不起作用了，因为pageRequest不为null

@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /api
 spring:
+  application:
+    name: openapi-interface
   profiles:
     active: dev
 
