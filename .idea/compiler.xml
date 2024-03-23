@@ -8,16 +8,24 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="openapi-server" />
+        <module name="openapi-map" />
         <module name="openapi-interface" />
         <module name="openapi-client-spring-boot-starter" />
+        <module name="openapi-gateway" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="test" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="openapi-client-spring-boot-starter" options="-parameters" />
+      <module name="openapi-gateway" options="-parameters" />
       <module name="openapi-interface" options="-parameters" />
+      <module name="openapi-map" options="-parameters" />
       <module name="openapi-server" options="-parameters" />
+      <module name="test" options="-parameters" />
     </option>
   </component>
 </project>

@@ -2,9 +2,12 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/openapi-client-spring-boot-starter/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/openapi-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/openapi-interface/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/openapi-map/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/openapi-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/test/src/main/java" charset="UTF-8" />
   </component>
 </project>

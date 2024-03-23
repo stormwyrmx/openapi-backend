@@ -33,6 +33,8 @@ import java.util.Objects;
 @RequestMapping("/interfaceInfo")
 @Slf4j
 @Validated
+//在默认配置下，Spring MVC并不会自动验证简单类型的方法参数（如`String`、`int`等）
+//若要让这些约束注解生效，需要在控制器方法参数前使用`@Valid`或`@Validated`注解来触发验证
 @RequiredArgsConstructor
 public class InterfaceInfoController
 {
@@ -213,7 +215,7 @@ public class InterfaceInfoController
             throw new BusinessException(ResultCodeEnum.SYSTEM_ERROR,"接口验证失败");
         }
         //用户调用接口成功后，将调用接口的用户的接口调用次数+1（不是接口创建者的调用次数+1）
-        Integer count = interfaceInfoService.addInvokeCount(info.getId(), user.getId());
+        Integer count = interfaceInfoService.addInvokeCount(info.getId(), user.getId());//这里是调用接口的用户id，不是接口创建人id
         if (count<=0)
         {
             throw new BusinessException(ResultCodeEnum.SYSTEM_ERROR,"接口调用次数更新失败");

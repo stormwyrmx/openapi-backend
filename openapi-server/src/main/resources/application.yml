@@ -27,13 +27,17 @@ mybatis-plus:
 # 日志配置
 logging:
   level:
+#    org:
+#      springframework:
+#        cloud:
+#          gateway: trace
     com:
       weng:
         openapiserver:
           mapper: debug
           service: debug
           controller: debug
-# api key配置，给粗默认的api key
+# api key配置，给出默认的api key
 openapi:
   client:
     api-key: api-ee9cb04317251601d9a15e8c35312d24

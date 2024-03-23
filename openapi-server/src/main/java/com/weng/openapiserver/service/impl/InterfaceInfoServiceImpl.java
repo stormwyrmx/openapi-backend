@@ -101,7 +101,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
                     .build();
             userInterfaceInfoMapper.insert(userInterfaceInfo);
         }
-        //如果用户没有调用过该接口，则直接开通特定接口调用权限，为它创建一条新的记录
+        //更新用户接口调用信息，减少剩余调用次数，增加总调用次数
         LambdaUpdateWrapper<UserInterfaceInfo> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.setSql("total_num = total_num + 1, left_num = left_num - 1")
                 .set(UserInterfaceInfo::getUpdateTime, LocalDateTime.now())
