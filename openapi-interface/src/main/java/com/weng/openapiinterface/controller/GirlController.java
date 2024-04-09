@@ -28,8 +28,8 @@ public class GirlController
     @GetMapping("/getGirlFriend")
     public String getGirlFriend(String name, HttpServletRequest request)
     {
-        parseHeader(request);
-        return "girlFriend:" + name;
+//        parseHeader(request);
+            return "girlFriend:" + name;
     }
 
     @PostMapping("/changeToGirl")

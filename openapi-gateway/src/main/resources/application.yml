@@ -1,0 +1,19 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: gateway
+  cloud:
+#    nacos:
+#      server-addr: 192.168.203.132
+    gateway:
+      routes:
+        - id: openapi-interface # 路由的id，没有规定规则但要求唯一，建议配合服务名（spring.application.name）
+          uri: http://localhost:8081 # 路由微服务的目标，从注册中心获取服务列表，lb表示负载均衡。
+          predicates: # 路由断言（规则），判断请求是否符合规则，如果符合机路由到uri里写的目标
+            - Path=/api/**   # 以请求路径做判断，以/items开头则符合
+          # 192.168.203.132:8080/items/** => 192.168.203.132:8081/items/** 或 192.168.203.132:8083/items/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: debug

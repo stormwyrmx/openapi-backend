@@ -9,4 +9,6 @@ class ResultCodeEnumTest
     {
         System.out.println(ResultCodeEnum.SUCCESS==ResultCodeEnum.SUCCESS);
     }
+
+
 }
