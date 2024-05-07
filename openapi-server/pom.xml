@@ -66,18 +66,11 @@
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>4.4.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-spring-boot3-starter -->
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.5</version>
-            <!--排除这个依赖，不然springboot 3.2版本以上的运行不了-->
-            <!--mybatis2.1.1是不兼容spring boot3.2-->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mybatis</groupId>
-                    <artifactId>mybatis-spring</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.6</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -99,17 +92,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>3.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter-test</artifactId>
-            <version>3.0.3</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
